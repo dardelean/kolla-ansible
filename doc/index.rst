@@ -68,6 +68,7 @@ Kolla Services
    cinder-guide
    cinder-guide-hnas
    designate-guide
+   hyperv-guide
    ironic-guide
    manila-guide
    manila-hnas-guide
