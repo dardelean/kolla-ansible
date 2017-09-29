@@ -1,0 +1,5 @@
+---
+- name: Restart cinder-volume
+  win_service:
+    name: cinder-volume
+    state: restarted

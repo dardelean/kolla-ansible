@@ -1,0 +1,36 @@
+[DEFAULT]
+debug = {{ openstack_logging_debug }}
+auth_strategy = keystone
+volume_name_template = volume-%s
+transport_url = {{ rpc_transport_url }}
+glance_api_servers = {{ internal_protocol }}://{% for host in groups['glance-api'] %}{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ glance_api_port }}{% if not loop.last %},{% endif %}{% endfor %}
+
+sql_connection = mysql+pymysql://{{ cinder_database_user }}:{{ cinder_database_password }}@{{ cinder_database_address }}/cinder
+image_conversion_dir = C:\ImageConversionDir
+lock_path = C:\OpenStack\Lock\
+log_dir = C:\OpenStack\Log\
+log_file = cinder-volume-smb.log
+enabled_backends = myWindowsSMBBackend
+
+[coordination]
+backend_url = file:///C:/OpenStack/Lock/
+
+[nova]
+region_name = {{ openstack_region_name }}
+auth_strategy = keystone
+auth_type = password
+auth_url = {{ internal_protocol }}://{{ kolla_internal_fqdn }}:{{ keystone_public_port }}
+project_name = service
+username = {{ nova_keystone_user }}
+password = {{ nova_keystone_password }}
+project_domain_name = {{ default_project_domain_name }}
+user_domain_name = {{ default_user_domain_name }}
+
+[myWindowsSMBBackend]
+volume_backend_name = myWindowsSMBBackend
+volume_driver = cinder.volume.drivers.windows.smbfs.WindowsSmbfsDriver
+smbfs_default_volume_format = vhd
+max_over_subscription_ratio = 1.0
+reserved_percentage = 5
+smbfs_mount_point_base = C:\OpenStack\mnt\
+smbfs_shares_config = C:\Program Files\Cloudbase Solutions\OpenStack\etc\cinder\smbfs_shares_list

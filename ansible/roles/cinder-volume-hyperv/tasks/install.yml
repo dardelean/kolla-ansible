@@ -1,0 +1,17 @@
+---
+- name: Create MSIs download directory
+  win_command: "cmd /c mkdir {{ msi_dir }}"
+  args:
+    creates: "{{ msi_dir }}"
+
+- name: Download Cinder Volume MSI
+  win_get_url:
+    url: "{{ cinder_msi_url }}"
+    dest: "{{ msi_dir }}\\{{ hyperv_cinder_msi }}"
+    force: no
+
+- name: Install the Cinder Volume MSI
+  win_command: "msiexec /i {{ hyperv_cinder_msi }} SKIPCINDERCONF=0"
+  args:
+    chdir: "{{ msi_dir }}"
+    creates: "%PROGRAMFILES%\\Cloudbase Solutions\\OpenStack\\Cinder\\bin"

@@ -1,0 +1,6 @@
+---
+- name: Checking for SMB share
+  win_share:
+    name: "{{ smb_share_name }}"
+    path: "{{ smb_share_address }}"
+    state: present

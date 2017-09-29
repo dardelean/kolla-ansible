@@ -305,6 +305,16 @@
         tags: cinder,
         when: enable_cinder | bool }
 
+- name: Apply cinder-volume-hyperv role
+  gather_facts: false
+  hosts:
+    - hyperv
+  serial: '{{ serial|default("0") }}'
+  roles:
+    - { role: cinder-volume-hyperv,
+        tags: cinder-volume-hyperv,
+        when: enable_cinder_backend_smb_hyperv | bool }
+
 - name: Apply role nova
   gather_facts: false
   hosts:

@@ -11,6 +11,7 @@ Currently, Kolla can deploy the following OpenStack services for Hyper-V:
 * nova-compute
 * neutron-hyperv-agent
 * wsgate
+* cinder-volume
 
 It is possible to use Hyper-V as a compute node within an OpenStack Deployment.
 The nova-compute service runs as openstack-compute, a 64-bit service directly
@@ -21,6 +22,22 @@ functionality within the OpenStack infrastructure.
 
 The wsgate is the FreeRDP-WebConnect service that is used for accessing
 virtual machines from Horizon web interface.
+
+cinder-volume-hyperv role allows the deployment of Cinder Volume using
+the SMB driver, which will work out of the box if configured correctly,
+without any changes on the controller side. A SMB share needs to be
+configured before using this role.
+
+The Cinder SMB driver expects the passed shares to have the following form:
+``//shareaddress/sharename``. The MSI will translate the backslashes to slashes
+for you. Also, administrative shares, such as ``\hostaddr\c$\path`` should not
+be used, nor should local paths, such as ``c:\path\to\volumes``.
+
+S2D (Storage Spaces Direct) with SoFS (Scale-out File Server) clustered
+storage can be used with cinder-smb-volume.
+
+The two roles, nova-hyperv and cinder-volume-hyperv, work and can be deployed
+independently from other.
 
 .. note::
 
@@ -80,20 +97,26 @@ running and started automatically.
 Preparation for Kolla deployer node
 ===================================
 
-Hyper-V role is required, enable it in ``/etc/kolla/globals.yml``:
+Hyper-V Nova or Cinder roles can be enabled it in ``/etc/kolla/globals.yml``:
 
 .. code-block:: console
 
     enable_hyperv: "yes"
+    enable_cinder_backend_smb_hyperv: "yes"
 
-Hyper-V options are also required in ``/etc/kolla/globals.yml``:
+Depending on the role, Hyper-V options are also required in ``/etc/kolla/globals.yml``:
 
 .. code-block:: console
 
+    # for nova
     hyperv_username: <HyperV username>
     hyperv_password: <HyperV password>
     vswitch_name: <HyperV virtual switch name>
     nova_msi_url: "https://www.cloudbase.it/downloads/HyperVNovaCompute_Beta.msi"
+    # for cinder
+    cinder_msi_url: "https://cloudbase.it/downloads/CinderVolumeSetup_Pike_11_0_0.msi"
+    smb_share_address: <full SMB share address>
+    smb_share_name: <SMB share name>
 
 If tenant networks are to be built using VLAN add corresponding type in
 ``/etc/kolla/globals.yml``:
@@ -162,13 +185,19 @@ OpenStack HyperV services can be inspected and managed from PowerShell:
 
     PS C:\> Get-Service nova-compute
     PS C:\> Get-Service neutron-hyperv-agent
+    PS C:\> Get-Service cinder-volume
 
 .. code-block:: console
 
     PS C:\> Restart-Service nova-compute
     PS C:\> Restart-Service neutron-hyperv-agent
+    PS C:\> Restart-Service cinder-volume
 
 
 For more information on OpenStack HyperV, see
 `Hyper-V virtualization platform
 <https://docs.openstack.org/ocata/config-reference/compute/hypervisor-hyper-v.html>`__.
+
+For more information on Cinder installation on Windows, see
+`this doc
+<https://docs.openstack.org/cinder/latest/install/index-windows.html>`__.

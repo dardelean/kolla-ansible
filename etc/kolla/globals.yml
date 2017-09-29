@@ -151,6 +151,7 @@ kolla_internal_vip_address: "10.10.10.254"
 #enable_cinder_backup: "yes"
 #enable_cinder_backend_hnas_iscsi: "no"
 #enable_cinder_backend_hnas_nfs: "no"
+#enable_cinder_backend_smb_hyperv: "no"
 #enable_cinder_backend_iscsi: "no"
 #enable_cinder_backend_lvm: "no"
 #enable_cinder_backend_nfs: "no"
@@ -351,6 +352,10 @@ kolla_internal_vip_address: "10.10.10.254"
 #vswitch_name: "vswitch"
 # URL from which Nova Hyper-V MSI is downloaded
 #nova_msi_url: "https://www.cloudbase.it/downloads/HyperVNovaCompute_Beta.msi"
+# required for cinder-smb-hyperv
+#cinder_msi_url: "https://cloudbase.it/downloads/CinderVolumeSetup_Pike_11_0_0.msi"
+#smb_share_address: "//address/smbsharename"
+#smb_share_name: "smbshare"
 
 #############################
 # Horizon - Dashboard Options

@@ -1,0 +1,25 @@
+---
+- name: Create log directory
+  win_command: "cmd /c mkdir {{ log_dir }}"
+  args:
+    creates: "{{ log_dir }}"
+
+- name: Configure cinder-volume service
+  win_template:
+    src: "{{ item }}"
+    dest: "%PROGRAMFILES%\\Cloudbase Solutions\\OpenStack\\Cinder\\etc\\cinder.conf"
+  with_first_found:
+    - "{{ node_custom_config  }}/cinder-smb-hyperv/{{ inventory_hostname }}/cinder_hyperv.conf"
+    - "{{ node_custom_config  }}/cinder-smb-hyperv/cinder_hyperv.conf"
+    - "cinder_hyperv.conf.j2"
+  notify: Restart cinder-volume
+
+- name: Configure smb-shares-list file
+  win_template:
+    src: "{{ item }}"
+    dest: "%PROGRAMFILES%\\Cloudbase Solutions\\OpenStack\\Cinder\\etc\\smbfs_shares_list"
+  with_first_found:
+    - "{{ node_custom_config  }}/cinder-smb-hyperv/{{ inventory_hostname }}/smbfs_shares_list"
+    - "{{ node_custom_config  }}/cinder-smb-hyperv/smbfs_shares_list"
+    - "smbfs_shares_list.j2"
+  notify: Restart cinder-volume
